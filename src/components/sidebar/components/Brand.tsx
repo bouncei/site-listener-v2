@@ -2,7 +2,6 @@
 import { Flex, Image, useColorModeValue } from "@chakra-ui/react";
 
 // Custom components
-import { HorizonLogo } from "components/icons/Icons";
 import { HSeparator } from "components/separator/Separator";
 
 export function SidebarBrand() {
