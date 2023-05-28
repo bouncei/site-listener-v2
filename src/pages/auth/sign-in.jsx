@@ -1,4 +1,12 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Tooltip,
+  FormErrorMessage,
+} from "@chakra-ui/react";
 import React from "react";
 // Chakra imports
 import {
@@ -32,20 +40,53 @@ export default function SignIn() {
   const textColorDetails = useColorModeValue("navy.700", "secondaryGray.600");
   const textColorBrand = useColorModeValue("brand.500", "white");
   const brandStars = useColorModeValue("brand.500", "brand.400");
-  const googleBg = useColorModeValue("secondaryGray.300", "whiteAlpha.200");
-  const googleText = useColorModeValue("navy.700", "white");
-  const googleHover = useColorModeValue(
-    { bg: "gray.200" },
-    { bg: "whiteAlpha.300" }
-  );
-  const googleActive = useColorModeValue(
-    { bg: "secondaryGray.300" },
-    { bg: "whiteAlpha.200" }
-  );
-  const [show, setShow] = React.useState(false);
+  const [signInForm, setSignInForm] = React.useState({
+    email: "",
+    password: "",
+  });
+  const [registerForm, setRegisterForm] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [show, setShow] = React.useState({
+    password: false,
+    confirm_pwd: false,
+  });
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [loading, setLoading] = React.useState({
+    signin: false,
+    register: false,
+  });
+  const [error, setError] = React.useState("sdsdsdsdss");
 
-  const handleClick = () => setShow(!show);
+  const handleChangeSignIn = (e) => {
+    const { name, value } = e.target;
+    return;
+  };
+
+  const handleChangeRegister = (e) => {
+    const { name, value } = e.target;
+    setError("");
+
+    return;
+  };
+  const handleClickPass = () => setShow({ ...show, password: !show.password });
+
+  const handleClickConfirm = () =>
+    setShow({ ...show, confirm_pwd: !show.confirm_pwd });
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+
+    return;
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    return;
+  };
+
   return (
     <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
       <Flex
@@ -65,6 +106,8 @@ export default function SignIn() {
           onChange={(index) => setTabIndex(index)}
           index={tabIndex}
           isFitted
+          colorScheme="messenger"
+          isLazy
         >
           <TabList>
             <Tab>Sign In</Tab>
@@ -72,13 +115,14 @@ export default function SignIn() {
           </TabList>
 
           <TabPanels>
+            {/* SING IN PANEL */}
             <TabPanel>
               <Box me="auto">
-                <Heading color={textColor} fontSize="36px" mb="10px">
+                <Heading color={textColor} fontSize="36px" my="10px">
                   Sign In
                 </Heading>
                 <Text
-                  mb="36px"
+                  mb="30px"
                   ms="4px"
                   color={textColorSecondary}
                   fontWeight="400"
@@ -98,101 +142,125 @@ export default function SignIn() {
                 me="auto"
                 mb={{ base: "20px", md: "auto" }}
               >
-                <FormControl>
-                  <FormLabel
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Email<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: "0px", md: "0px" }}
-                    type="email"
-                    placeholder="mail@simmmple.com"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                  />
-                  <FormLabel
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    display="flex"
-                  >
-                    Password<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <InputGroup size="md">
+                <form onSubmit={handleSignIn}>
+                  <FormControl>
+                    <FormLabel
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      mb="8px"
+                    >
+                      Email<Text color={brandStars}>*</Text>
+                    </FormLabel>
                     <Input
                       isRequired={true}
-                      fontSize="sm"
-                      placeholder="Min. 8 characters"
-                      mb="24px"
-                      size="lg"
-                      type={show ? "text" : "password"}
                       variant="auth"
+                      fontSize="sm"
+                      ms={{ base: "0px", md: "0px" }}
+                      type="email"
+                      placeholder="mail@sitepatrol.com"
+                      mb="24px"
+                      fontWeight="500"
+                      size="lg"
                     />
-                    <InputRightElement
+                    <FormLabel
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
                       display="flex"
-                      alignItems="center"
-                      mt="4px"
                     >
-                      <Icon
-                        color={textColorSecondary}
-                        _hover={{ cursor: "pointer" }}
-                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                        onClick={handleClick}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                  <Flex justifyContent="space-between" align="center" mb="24px">
-                    <FormControl display="flex" alignItems="center">
-                      <Checkbox
-                        id="remember-login"
-                        colorScheme="brandScheme"
-                        me="10px"
-                      />
-                      <FormLabel
-                        htmlFor="remember-login"
-                        mb="0"
-                        fontWeight="normal"
-                        color={textColor}
+                      Password<Text color={brandStars}>*</Text>
+                    </FormLabel>
+                    <InputGroup size="md">
+                      <Input
+                        isRequired={true}
                         fontSize="sm"
+                        placeholder="Min. 8 characters"
+                        mb="24px"
+                        sx={{
+                          position: "relative",
+                        }}
+                        size="lg"
+                        type={show.password ? "text" : "password"}
+                        variant="auth"
+                        minLength={8}
+                      />
+                      <InputRightElement
+                        display="flex"
+                        alignItems="center"
+                        mt="4px"
                       >
-                        Keep me logged in
-                      </FormLabel>
-                    </FormControl>
-                    <Link href="/auth/forgot-password">
-                      <a>
-                        <Text
-                          color={textColorBrand}
-                          fontSize="sm"
-                          w="124px"
-                          fontWeight="500"
+                        <Tooltip
+                          label={
+                            show.password ? "Hide password!" : "Show password!"
+                          }
+                          shouldWrapChildren
+                          mt="3"
                         >
-                          Forgot password?
-                        </Text>
-                      </a>
-                    </Link>
-                  </Flex>
-                  <Button
-                    fontSize="sm"
-                    variant="brand"
-                    fontWeight="500"
-                    w="100%"
-                    h="50"
-                    mb="24px"
-                  >
-                    Sign In
-                  </Button>
-                </FormControl>
+                          <Icon
+                            color={textColorSecondary}
+                            _hover={{ cursor: "pointer" }}
+                            as={
+                              show.password
+                                ? RiEyeCloseLine
+                                : MdOutlineRemoveRedEye
+                            }
+                            onClick={handleClickPass}
+                          />
+                        </Tooltip>
+                      </InputRightElement>
+                    </InputGroup>
+                    <Flex
+                      justifyContent="space-between"
+                      align="center"
+                      mb="24px"
+                    >
+                      <FormControl display="flex" alignItems="center">
+                        <Checkbox
+                          id="remember-login"
+                          colorScheme="brandScheme"
+                          me="10px"
+                        />
+                        <FormLabel
+                          htmlFor="remember-login"
+                          mb="0"
+                          fontWeight="normal"
+                          color={textColor}
+                          fontSize="sm"
+                        >
+                          Keep me logged in
+                        </FormLabel>
+                      </FormControl>
+                      <Link href="/auth/forgot-password">
+                        <a>
+                          <Text
+                            color={textColorBrand}
+                            fontSize="sm"
+                            w="124px"
+                            fontWeight="500"
+                          >
+                            Forgot password?
+                          </Text>
+                        </a>
+                      </Link>
+                    </Flex>
+                    <Button
+                      fontSize="sm"
+                      variant="brand"
+                      fontWeight="500"
+                      w="100%"
+                      h="50"
+                      mb="24px"
+                      isLoading={loading.signin}
+                      type="submit"
+                    >
+                      Sign In
+                    </Button>
+                  </FormControl>
+                </form>
                 <Flex
                   flexDirection="column"
                   justifyContent="center"
@@ -210,6 +278,7 @@ export default function SignIn() {
                       <Text
                         color={textColorBrand}
                         as="span"
+                        _hover={{ cursor: "pointer" }}
                         ms="5px"
                         fontWeight="500"
                       >
@@ -220,19 +289,21 @@ export default function SignIn() {
                 </Flex>
               </Flex>
             </TabPanel>
+
+            {/* SING UP PANEL */}
             <TabPanel>
               <Box me="auto">
-                <Heading color={textColor} fontSize="36px" mb="10px">
+                <Heading color={textColor} fontSize="36px" my="10px">
                   Sign Up
                 </Heading>
                 <Text
-                  mb="36px"
+                  mb="30px"
                   ms="4px"
                   color={textColorSecondary}
                   fontWeight="400"
                   fontSize="md"
                 >
-                  Enter your email and password to sign in!
+                  Enter your name, email and password to sign up!
                 </Text>
               </Box>
               <Flex
@@ -246,101 +317,162 @@ export default function SignIn() {
                 me="auto"
                 mb={{ base: "20px", md: "auto" }}
               >
-                <FormControl>
-                  <FormLabel
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Email<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: "0px", md: "0px" }}
-                    type="email"
-                    placeholder="mail@simmmple.com"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                  />
-                  <FormLabel
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    display="flex"
-                  >
-                    Password<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <InputGroup size="md">
+                <form onSubmit={handleRegister}>
+                  <FormControl>
+                    <FormLabel
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      mb="8px"
+                    >
+                      Full Name <Text color={brandStars}>*</Text>
+                    </FormLabel>
                     <Input
                       isRequired={true}
-                      fontSize="sm"
-                      placeholder="Min. 8 characters"
-                      mb="24px"
-                      size="lg"
-                      type={show ? "text" : "password"}
                       variant="auth"
+                      fontSize="sm"
+                      ms={{ base: "0px", md: "0px" }}
+                      type="text"
+                      placeholder="John Doe"
+                      mb="24px"
+                      fontWeight="500"
+                      size="lg"
                     />
-                    <InputRightElement
+                    <FormLabel
                       display="flex"
-                      alignItems="center"
-                      mt="4px"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      mb="8px"
                     >
-                      <Icon
-                        color={textColorSecondary}
-                        _hover={{ cursor: "pointer" }}
-                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                        onClick={handleClick}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                  <Flex justifyContent="space-between" align="center" mb="24px">
-                    <FormControl display="flex" alignItems="center">
-                      <Checkbox
-                        id="remember-login"
-                        colorScheme="brandScheme"
-                        me="10px"
-                      />
-                      <FormLabel
-                        htmlFor="remember-login"
-                        mb="0"
-                        fontWeight="normal"
-                        color={textColor}
+                      Email<Text color={brandStars}>*</Text>
+                    </FormLabel>
+                    <Input
+                      isRequired={true}
+                      variant="auth"
+                      fontSize="sm"
+                      ms={{ base: "0px", md: "0px" }}
+                      type="email"
+                      placeholder="mail@sitepatrol.com"
+                      mb="24px"
+                      fontWeight="500"
+                      size="lg"
+                    />
+                    <FormLabel
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      display="flex"
+                    >
+                      Password<Text color={brandStars}>*</Text>
+                    </FormLabel>
+                    <InputGroup size="md">
+                      <Input
+                        isRequired={true}
                         fontSize="sm"
+                        placeholder="Min. 8 characters"
+                        mb="24px"
+                        size="lg"
+                        minLength={8}
+                        type={show.password ? "text" : "password"}
+                        variant="auth"
+                      />
+                      <InputRightElement
+                        display="flex"
+                        alignItems="center"
+                        mt="4px"
                       >
-                        Keep me logged in
-                      </FormLabel>
-                    </FormControl>
-                    <Link href="/auth/forgot-password">
-                      <a>
-                        <Text
-                          color={textColorBrand}
-                          fontSize="sm"
-                          w="124px"
-                          fontWeight="500"
+                        <Tooltip
+                          label={
+                            show.password ? "Hide password!" : "Show password!"
+                          }
+                          shouldWrapChildren
+                          mt="3"
                         >
-                          Forgot password?
-                        </Text>
-                      </a>
-                    </Link>
-                  </Flex>
-                  <Button
-                    fontSize="sm"
-                    variant="brand"
-                    fontWeight="500"
-                    w="100%"
-                    h="50"
-                    mb="24px"
-                  >
-                    Sign In
-                  </Button>
-                </FormControl>
+                          <Icon
+                            color={textColorSecondary}
+                            _hover={{ cursor: "pointer" }}
+                            as={
+                              show.password
+                                ? RiEyeCloseLine
+                                : MdOutlineRemoveRedEye
+                            }
+                            onClick={handleClickPass}
+                          />
+                        </Tooltip>
+                      </InputRightElement>
+                    </InputGroup>
+
+                    <FormLabel
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      display="flex"
+                    >
+                      Confirm Password <Text color={brandStars}>*</Text>
+                    </FormLabel>
+                    <InputGroup size="md">
+                      <Input
+                        isRequired={true}
+                        fontSize="sm"
+                        placeholder="Min. 8 characters"
+                        mb="24px"
+                        size="lg"
+                        minLength={8}
+                        type={show.confirm_pwd ? "text" : "password"}
+                        variant="auth"
+                      />
+                      <InputRightElement
+                        display="flex"
+                        alignItems="center"
+                        mt="4px"
+                      >
+                        <Tooltip
+                          label={
+                            show.confirm_pwd
+                              ? "Hide password!"
+                              : "Show password!"
+                          }
+                          shouldWrapChildren
+                          mt="3"
+                        >
+                          <Icon
+                            color={textColorSecondary}
+                            _hover={{ cursor: "pointer" }}
+                            as={
+                              show.confirm_pwd
+                                ? RiEyeCloseLine
+                                : MdOutlineRemoveRedEye
+                            }
+                            onClick={handleClickConfirm}
+                          />
+                        </Tooltip>
+                      </InputRightElement>
+                    </InputGroup>
+                    {error !== "" && (
+                      <Text color="red" textAlign={"center"} pb={2}>
+                        {error}
+                      </Text>
+                    )}
+                    <Button
+                      fontSize="sm"
+                      variant="brand"
+                      fontWeight="500"
+                      w="100%"
+                      h="50"
+                      mb="24px"
+                      isLoading={loading.register}
+                      type="submit"
+                    >
+                      Sign Up
+                    </Button>
+                  </FormControl>
+                </form>
                 <Flex
                   flexDirection="column"
                   justifyContent="center"
@@ -353,15 +485,16 @@ export default function SignIn() {
                     fontWeight="400"
                     fontSize="14px"
                   >
-                    Not registered yet?
+                    Already have an account?
                     <div onClick={() => setTabIndex(0)}>
                       <Text
                         color={textColorBrand}
                         as="span"
                         ms="5px"
+                        _hover={{ cursor: "pointer" }}
                         fontWeight="500"
                       >
-                        Create an Account
+                        Log in
                       </Text>
                     </div>
                   </Text>
