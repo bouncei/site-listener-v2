@@ -6,6 +6,7 @@ import {
   TabPanel,
   Tooltip,
   FormErrorMessage,
+  toast,
 } from "@chakra-ui/react";
 import React from "react";
 // Chakra imports
@@ -32,6 +33,7 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
+import { headers } from "../../../next.config";
 
 export default function SignIn() {
   // Chakra color mode
@@ -48,6 +50,7 @@ export default function SignIn() {
     name: "",
     email: "",
     password: "",
+    confirm_pwd: "",
   });
   const [show, setShow] = React.useState({
     password: false,
@@ -62,30 +65,118 @@ export default function SignIn() {
 
   const handleChangeSignIn = (e) => {
     const { name, value } = e.target;
-    return;
+
+    setSignInForm({ ...signInForm, [name]: value });
+    console.log(signInForm);
   };
 
   const handleChangeRegister = (e) => {
-    const { name, value } = e.target;
     setError("");
-
-    return;
+    const { name, value } = e.target;
+    setRegisterForm({ ...registerForm, [name]: value });
   };
+
   const handleClickPass = () => setShow({ ...show, password: !show.password });
 
   const handleClickConfirm = () =>
     setShow({ ...show, confirm_pwd: !show.confirm_pwd });
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
+    // SEND SIGN IN  CREDENTIALS TO THE BACKEND
     e.preventDefault();
+    setLoading({ ...loading, signin: true });
+    try {
+      // TODO: ADD API ENDPOINT TO SIGN IN
+      const res = await fetch("", {
+        body: JSON.stringify({
+          name: registerForm.name,
+          email: registerForm.email,
+          password: registerForm.confirm_pwd,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const resData = await res.json();
 
+      if (res && resData) {
+        setLoading({ ...loading, signin: false });
+        toast({
+          title: "Welcome Back.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        // TODO: ROUTE USER TO THE DASHBOARD
+      }
+    } catch (error) {
+      setLoading({ ...loading, signin: false });
+      toast({
+        title: "Something went wrong.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.log(error);
+    }
     return;
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
+    // SEND REGISTER CREDENTIALS TO THE BACKEND
     e.preventDefault();
+    setLoading({ ...loading, register: true });
+    try {
+      // TODO: ADD API ENDPOINT TO SIGN UP
+      const res = await fetch("", {
+        body: JSON.stringify({
+          name: registerForm.name,
+          email: registerForm.email,
+          password: registerForm.confirm_pwd,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const resData = await res.json();
+
+      if (res && resData) {
+        setLoading({ ...loading, register: false });
+        setTabIndex("0");
+        toast({
+          title: "Account created.",
+          description: "Please sign in",
+          status: "success",
+          duration: 6000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      setLoading({ ...loading, register: false });
+      toast({
+        title: "Something went wrong.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.log(error);
+    }
     return;
   };
+
+  React.useEffect(() => {
+    // PASSWORD VALIDATION
+    if (
+      registerForm["password"] !== "" &&
+      registerForm["confirm_pwd"] !== "" &&
+      registerForm["password"] !== registerForm["confirm_pwd"]
+    ) {
+      setError("Passwords doesn't match");
+      return;
+    }
+  }, [registerForm]);
 
   return (
     <DefaultAuthLayout illustrationBackground={"/img/auth/auth.png"}>
@@ -164,6 +255,9 @@ export default function SignIn() {
                       mb="24px"
                       fontWeight="500"
                       size="lg"
+                      name="email"
+                      value={signInForm.email}
+                      onChange={handleChangeSignIn}
                     />
                     <FormLabel
                       ms="4px"
@@ -178,7 +272,7 @@ export default function SignIn() {
                       <Input
                         isRequired={true}
                         fontSize="sm"
-                        placeholder="Min. 8 characters"
+                        placeholder="password"
                         mb="24px"
                         sx={{
                           position: "relative",
@@ -186,7 +280,9 @@ export default function SignIn() {
                         size="lg"
                         type={show.password ? "text" : "password"}
                         variant="auth"
-                        minLength={8}
+                        name="password"
+                        value={signInForm.password}
+                        onChange={(e) => handleChangeSignIn(e)}
                       />
                       <InputRightElement
                         display="flex"
@@ -234,18 +330,16 @@ export default function SignIn() {
                           Keep me logged in
                         </FormLabel>
                       </FormControl>
-                      <Link href="/auth/forgot-password">
-                        <a>
-                          <Text
-                            color={textColorBrand}
-                            fontSize="sm"
-                            w="124px"
-                            fontWeight="500"
-                          >
-                            Forgot password?
-                          </Text>
-                        </a>
-                      </Link>
+                      <Box>
+                        <Text
+                          color={textColorBrand}
+                          fontSize="sm"
+                          w="124px"
+                          fontWeight="500"
+                        >
+                          Forgot password?
+                        </Text>
+                      </Box>
                     </Flex>
                     <Button
                       fontSize="sm"
@@ -268,7 +362,7 @@ export default function SignIn() {
                   maxW="100%"
                   mt="0px"
                 >
-                  <Text
+                  <Box
                     color={textColorDetails}
                     fontWeight="400"
                     fontSize="14px"
@@ -285,7 +379,7 @@ export default function SignIn() {
                         Create an Account
                       </Text>
                     </div>
-                  </Text>
+                  </Box>
                 </Flex>
               </Flex>
             </TabPanel>
@@ -339,6 +433,10 @@ export default function SignIn() {
                       mb="24px"
                       fontWeight="500"
                       size="lg"
+                      name="name"
+                      id="name"
+                      value={registerForm.name}
+                      onChange={handleChangeRegister}
                     />
                     <FormLabel
                       display="flex"
@@ -360,6 +458,10 @@ export default function SignIn() {
                       mb="24px"
                       fontWeight="500"
                       size="lg"
+                      name="email"
+                      id="email"
+                      value={registerForm.email}
+                      onChange={handleChangeRegister}
                     />
                     <FormLabel
                       ms="4px"
@@ -378,8 +480,12 @@ export default function SignIn() {
                         mb="24px"
                         size="lg"
                         minLength={8}
+                        name="password"
                         type={show.password ? "text" : "password"}
                         variant="auth"
+                        id="password"
+                        value={registerForm.password}
+                        onChange={handleChangeRegister}
                       />
                       <InputRightElement
                         display="flex"
@@ -424,8 +530,12 @@ export default function SignIn() {
                         mb="24px"
                         size="lg"
                         minLength={8}
+                        name="confirm_pwd"
                         type={show.confirm_pwd ? "text" : "password"}
                         variant="auth"
+                        id="confirm_pwd"
+                        value={registerForm.confirm_pwd}
+                        onChange={handleChangeRegister}
                       />
                       <InputRightElement
                         display="flex"
@@ -480,7 +590,7 @@ export default function SignIn() {
                   maxW="100%"
                   mt="0px"
                 >
-                  <Text
+                  <Box
                     color={textColorDetails}
                     fontWeight="400"
                     fontSize="14px"
@@ -497,7 +607,7 @@ export default function SignIn() {
                         Log in
                       </Text>
                     </div>
-                  </Text>
+                  </Box>
                 </Flex>
               </Flex>
             </TabPanel>
