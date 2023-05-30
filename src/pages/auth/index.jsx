@@ -6,7 +6,7 @@ import {
   TabPanel,
   Tooltip,
   FormErrorMessage,
-  toast,
+  useToast,
 } from "@chakra-ui/react";
 import React from "react";
 // Chakra imports
@@ -34,6 +34,7 @@ import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { headers } from "../../../next.config";
+import { Router, useRouter } from "next/router";
 
 export default function SignIn() {
   // Chakra color mode
@@ -42,6 +43,8 @@ export default function SignIn() {
   const textColorDetails = useColorModeValue("navy.700", "secondaryGray.600");
   const textColorBrand = useColorModeValue("brand.500", "white");
   const brandStars = useColorModeValue("brand.500", "brand.400");
+  const toast = useToast();
+  const router = useRouter();
   const [signInForm, setSignInForm] = React.useState({
     email: "",
     password: "",
@@ -86,29 +89,39 @@ export default function SignIn() {
     e.preventDefault();
     setLoading({ ...loading, signin: true });
     try {
-      // TODO: ADD API ENDPOINT TO SIGN IN
-      const res = await fetch("", {
-        body: JSON.stringify({
-          name: registerForm.name,
-          email: registerForm.email,
-          password: registerForm.confirm_pwd,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
+      const res = await fetch(
+        `https://site-listener.vercel.app/api/auth?email=${signInForm.email}&password=${signInForm.password}`,
+        {
+          method: "GET",
+        }
+      );
       const resData = await res.json();
+
+      console.log(resData);
 
       if (res && resData) {
         setLoading({ ...loading, signin: false });
-        toast({
-          title: "Welcome Back.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        // TODO: ROUTE USER TO THE DASHBOARD
+        if (resData.user) {
+          toast({
+            title: "Welcome Back.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+          window.localStorage.setItem("user", JSON.stringify(resData.user)); //Save user information on localstorage
+          setSignInForm({
+            email: "",
+            password: "",
+          });
+          router.push("/admin/default");
+        } else {
+          toast({
+            title: resData.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       }
     } catch (error) {
       setLoading({ ...loading, signin: false });
@@ -128,10 +141,9 @@ export default function SignIn() {
     e.preventDefault();
     setLoading({ ...loading, register: true });
     try {
-      // TODO: ADD API ENDPOINT TO SIGN UP
-      const res = await fetch("", {
+      const res = await fetch("https://site-listener.vercel.app/api/auth", {
         body: JSON.stringify({
-          name: registerForm.name,
+          username: registerForm.name,
           email: registerForm.email,
           password: registerForm.confirm_pwd,
         }),
@@ -151,6 +163,12 @@ export default function SignIn() {
           status: "success",
           duration: 6000,
           isClosable: true,
+        });
+        setRegisterForm({
+          name: "",
+          email: "",
+          password: "",
+          confirm_pwd: "",
         });
       }
     } catch (error) {

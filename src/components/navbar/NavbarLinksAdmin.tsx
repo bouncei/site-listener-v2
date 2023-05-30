@@ -27,7 +27,9 @@ import { FaEthereum } from "react-icons/fa";
 import routes from "routes";
 import { Image } from "components/image/Image";
 import { Router, useRouter } from "next/router";
+import { useAuth } from "hooks";
 export default function HeaderLinks(props: { secondary: boolean }) {
+  const { user, logout } = useAuth();
   const { secondary } = props;
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -183,7 +185,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           <Avatar
             _hover={{ cursor: "pointer" }}
             color="white"
-            name="Adela Parkson" //This should be the name of the logged in user
+            name={user?.username} //This should be the name of the logged in user
             bg="#11047A"
             size="sm"
             w="40px"
@@ -210,7 +212,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, Adela
+              👋&nbsp; Hey, {user?.username.split(" ")[0]}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
@@ -231,7 +233,9 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               borderRadius="8px"
               px="14px"
             >
-              <Text fontSize="sm">Log out</Text>
+              <Text fontSize="sm" onClick={() => logout()}>
+                Log out
+              </Text>
             </MenuItem>
           </Flex>
         </MenuList>

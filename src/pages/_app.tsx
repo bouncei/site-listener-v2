@@ -10,18 +10,21 @@ import "styles/Contact.css";
 import "react-calendar/dist/Calendar.css";
 import "styles/MiniCalendar.css";
 import Head from "next/head";
+import { AuthProvider } from "contexts/Auth";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <Head>
-        <title>Site Patrol</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-      </Head>
-      <React.StrictMode>
-        <Component {...pageProps} />
-      </React.StrictMode>
+      <AuthProvider>
+        <Head>
+          <title>Site Patrol</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#000000" />
+        </Head>
+        <React.StrictMode>
+          <Component {...pageProps} />
+        </React.StrictMode>
+      </AuthProvider>
     </ChakraProvider>
   );
 }
