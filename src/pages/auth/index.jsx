@@ -26,11 +26,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 // Custom components
-import { HSeparator } from "components/separator/Separator";
 import DefaultAuthLayout from "layouts/auth/Default";
 // Assets
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { headers } from "../../../next.config";
@@ -64,7 +62,7 @@ export default function SignIn() {
     signin: false,
     register: false,
   });
-  const [error, setError] = React.useState("sdsdsdsdss");
+  const [error, setError] = React.useState("");
 
   const handleChangeSignIn = (e) => {
     const { name, value } = e.target;

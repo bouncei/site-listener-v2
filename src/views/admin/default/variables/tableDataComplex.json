@@ -1,12 +1,12 @@
 [
   {
-    "name":"Horizon UI PRO",
+    "name":"User Information",
     "status": "Approved",
     "date": "18 Apr 2022",
     "progress": 75.5  
   },
   {
-    "name":"Horizon UI Free",
+    "name":"Admin Information",
     "status": "Disable",
     "date": "18 Apr 2022",
     "progress": 25.5  

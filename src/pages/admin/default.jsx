@@ -62,12 +62,25 @@ import { BsShieldLockFill, BsGlobe2 } from "react-icons/bs";
 import { MdCancel } from "react-icons/md";
 
 import Usa from "img/dashboards/usa.png";
+import { useEffect, useState } from "react";
+import { getWebsitesforSingleUser } from "utils/functions";
+import { useAuth } from "hooks";
 
 export default function UserReports() {
   // Chakra Color Mode
-
+  const { user } = useAuth();
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const [websites, setWebsites] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const data = await getWebsitesforSingleUser(user._id);
+      console.log("Website Information", data);
+      setWebsites(data);
+    })();
+  }, [user]);
 
   return (
     <AdminLayout>

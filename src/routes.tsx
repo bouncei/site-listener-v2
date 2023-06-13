@@ -55,13 +55,13 @@ const routes: IRoute[] = [
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Profile,
   },
-  {
-    name: "RTL Admin",
-    layout: "/rtl",
-    path: "/rtl-default",
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    component: RTL,
-  },
+  // {
+  //   name: "RTL Admin",
+  //   layout: "/rtl",
+  //   path: "/rtl-default",
+  //   icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+  //   component: RTL,
+  // },
 ];
 
 export default routes;
