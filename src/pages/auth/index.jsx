@@ -33,6 +33,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { headers } from "../../../next.config";
 import { Router, useRouter } from "next/router";
+import { baseUrl } from "lib/api";
 
 export default function SignIn() {
   // Chakra color mode
@@ -88,7 +89,7 @@ export default function SignIn() {
     setLoading({ ...loading, signin: true });
     try {
       const res = await fetch(
-        `https://site-listener.vercel.app/api/auth?email=${signInForm.email}&password=${signInForm.password}`,
+        `${baseUrl}/auth?email=${signInForm.email}&password=${signInForm.password}`,
         {
           method: "GET",
         }
@@ -139,7 +140,7 @@ export default function SignIn() {
     e.preventDefault();
     setLoading({ ...loading, register: true });
     try {
-      const res = await fetch("https://site-listener.vercel.app/api/auth", {
+      const res = await fetch("${baseUrl}/auth", {
         body: JSON.stringify({
           username: registerForm.name,
           email: registerForm.email,

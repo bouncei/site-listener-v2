@@ -62,6 +62,7 @@ export default function ProfileOverview() {
           <Projects
             banner={banner}
             avatar={avatar}
+            userId={user?._id}
             name="Adela Parkson"
             job="Product Designer"
             posts="17"
